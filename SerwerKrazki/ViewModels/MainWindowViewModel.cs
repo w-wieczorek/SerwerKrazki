@@ -21,6 +21,7 @@ public partial class MainWindowViewModel : ObservableObject
     [ObservableProperty] private string _tableOfTournament = "";
     [ObservableProperty] private string _pomocMd = "";
     [ObservableProperty] private string? _liczbaRund;
+    [ObservableProperty] private string? _timeLimit;
     [ObservableProperty] private bool _canChangePlayers = true;
     [ObservableProperty] private bool _tournamentIsFinished = false;
     [ObservableProperty] private bool _tournamentNotInProgress = true;
@@ -135,6 +136,18 @@ public partial class MainWindowViewModel : ObservableObject
     
     private char PlayGame(int idxA, int idxB)
     {
+        int timeLimit = 300;
+        if (TimeLimit is not null)
+        {
+            try
+            {
+                timeLimit = Int32.Parse(TimeLimit!);
+            }
+            catch (Exception ex) when (ex is FormatException || ex is FormatException)
+            {
+                timeLimit = 300;
+            }
+        }
         Logs = $"z{idxA} vs z{idxB}\n";
         char wynik = '?';
         uint rnd = (uint)DateTime.Now.GetHashCode();
@@ -155,8 +168,8 @@ public partial class MainWindowViewModel : ObservableObject
         uint i, j, d;
         for (i = 0; i < 10; i++)
         {
-            sterty[i] = "";
-            d = nxtRnd() % 20 + 21;
+            sterty[i] = i < 5 ? "b" : "c";
+            d = nxtRnd() % 20 + 20;
             for (j = 0; j < d; j++)
             {
                 sterty[i] += blubc();
@@ -216,7 +229,7 @@ public partial class MainWindowViewModel : ObservableObject
             stopwatch.Stop();
             Logs += $"Od z{idxA}: {message}\n";
             elapsedTime = stopwatch.Elapsed;
-            if (elapsedTime.TotalMilliseconds > 300)
+            if (elapsedTime.TotalMilliseconds > timeLimit)
             {
                 wynik = '-';
                 writerA.WriteLine("241");
@@ -235,7 +248,7 @@ public partial class MainWindowViewModel : ObservableObject
                     }
                     writerB.WriteLine(initialLineForB);
                     Logs += $"Do z{idxB}: {initialLineForB}\n";
-                    stopwatch.Start();
+                    stopwatch.Restart();
                 }
                 else
                 {
@@ -253,7 +266,7 @@ public partial class MainWindowViewModel : ObservableObject
                 stopwatch.Stop();
                 Logs += $"Od z{idxB}: {message}\n";
                 elapsedTime = stopwatch.Elapsed;
-                if (elapsedTime.TotalMilliseconds > 300)
+                if (elapsedTime.TotalMilliseconds > timeLimit)
                 {
                     wynik = '+';
                     writerB.WriteLine("241");
@@ -271,12 +284,12 @@ public partial class MainWindowViewModel : ObservableObject
                             writerA.WriteLine(message!.Replace("210", "220"));
                             Logs += $"Do z{idxA}: {message!.Replace("210", "220")}\n";
                             kod = 220;
-                            stopwatch.Start();
+                            stopwatch.Restart();
                             message = readerA.ReadLine();
                             stopwatch.Stop();
                             Logs += $"Od z{idxA}: {message}\n";
                             elapsedTime = stopwatch.Elapsed;
-                            if (elapsedTime.TotalMilliseconds > 300)
+                            if (elapsedTime.TotalMilliseconds > timeLimit)
                             {
                                 wynik = '-';
                                 writerA.WriteLine("241");
@@ -294,7 +307,7 @@ public partial class MainWindowViewModel : ObservableObject
                                         writerB.WriteLine(message!.Replace("210", "220"));
                                         Logs += $"Do z{idxB}: {message!.Replace("210", "220")}\n";
                                         kod = 220;
-                                        stopwatch.Start();
+                                        stopwatch.Restart();
                                     }
                                     else
                                     {

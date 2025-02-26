@@ -51,6 +51,14 @@
                         <TextBox Width="20"
                                  IsVisible="{Binding TournamentNotInProgress}"
                                  Text="{Binding LiczbaRund, Mode=TwoWay}"/>
+                        <TextBlock Padding="0, 5, 0, 0"
+                                   IsVisible="{Binding TournamentNotInProgress}"
+                                   FontSize="15">
+                            Czas na ruch [ms]:
+                        </TextBlock>
+                        <TextBox Width="30"
+                                 IsVisible="{Binding TournamentNotInProgress}"
+                                 Text="{Binding TimeLimit, Mode=TwoWay}"/>
                         <Button Command="{Binding OnRozpocznijTurniej}"
                                 IsVisible="{Binding TournamentNotInProgress}"
                                 Margin="20, 0, 0, 0">
